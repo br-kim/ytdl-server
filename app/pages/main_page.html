@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script>
+        async function getFileList() {
+            res = await fetch("/download")
+            res_json = await res.json()
+            return res_json
+        }
+
+        async function loadFileList() {
+            console.log("test")
+            file_list = await getFileList()
+            for (element of file_list) {
+                div = await generateFileDiv(element)
+                console.log(div)
+                document.getElementById("file_list").appendChild(div)
+            }
+        }
+
+        async function downloadFile(file_name) {
+            res = await fetch(`/download/${file_name}`)
+            console.log("clicked")
+            blob = await res.blob()
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = `${file_name}`
+            a.click()
+            a.remove()
+            window.URL.revokeObjectURL(url);
+        }
+
+        async function generateFileDiv(file_name) {
+            element = document.createElement("div")
+            element.id = file_name
+            // element.src = `/download/${file_name}`;
+            element.innerText = file_name
+            element.addEventListener("click", async () => { await downloadFile(file_name) })
+            console.log(element)
+            return element
+        }
+
+        loadFileList().then()
+        // getFileList().then(res => console.log(res))
+    </script>
+</head>
+
+<body>
+    안녕하세요.
+    <div id="container">
+        <div id="file_list">
+        </div>
+    </div>
+</body>
+
+</html>
