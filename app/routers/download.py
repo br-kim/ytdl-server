@@ -11,7 +11,7 @@ download_router = APIRouter()
 
 @download_router.get("/")
 async def main(request: Request):
-    return FileResponse("app/pages/main_page.html")
+    return FileResponse("/app/pages/main_page.html")
 
 
 @download_router.get("/playlist")
