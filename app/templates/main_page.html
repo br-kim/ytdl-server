@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-
-    <script>
+{% block content %}
+<div class="d-flex flex-column">
+    <h1>다운로드 페이지</h1>
+    <div id="container">
+        <div id="file_list">
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+<script>
         async function getFileList() {
             res = await fetch("/download")
             res_json = await res.json()
@@ -36,26 +42,23 @@
         }
 
         async function generateFileDiv(file_name) {
+            container = document.createElement("div")
+            container.classList.add("d-flex")
             element = document.createElement("div")
             element.id = file_name
             // element.src = `/download/${file_name}`;
             element.innerText = file_name
-            element.addEventListener("click", async () => { await downloadFile(file_name) })
-            console.log(element)
-            return element
+            downloadButton = document.createElement("button");
+            downloadButton.innerText = "다운로드";
+            downloadButton.classList.add("btn", "btn-primary")
+            downloadButton.addEventListener("click", async () => { await downloadFile(file_name) })
+            console.log(element);
+            container.append(element, downloadButton);
+            return container
         }
 
         loadFileList().then()
         // getFileList().then(res => console.log(res))
     </script>
-</head>
+{% endblock %}
 
-<body>
-    안녕하세요.
-    <div id="container">
-        <div id="file_list">
-        </div>
-    </div>
-</body>
-
-</html>
