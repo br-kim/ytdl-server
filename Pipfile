@@ -8,6 +8,8 @@ fastapi = "*"
 yt-dlp = "*"
 jinja2 = "*"
 uvicorn = "*"
+apscheduler = "*"
+requests = "*"
 
 [dev-packages]
 
