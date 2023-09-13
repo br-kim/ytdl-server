@@ -21,9 +21,9 @@ def download_playlist(playlist_id):
         },
         "flat-playlist": True,
     }
-    dl_opts = {
-        "outtmpl": "/home/ii/PycharmProjects/ytdl-server/app/download/%(title)s.%(id)s.%(ext)s"
-    }
+    # download_path = "/home/ii/PycharmProjects/ytdl-server/app/download"
+    download_path = DOWNLOAD_PATH
+    dl_opts = {"outtmpl": f"{download_path}/%(title)s.%(id)s.%(ext)s"}
     process_opts = {
         "format": "mp3/bestaudio/best",
         "postprocessors": [
