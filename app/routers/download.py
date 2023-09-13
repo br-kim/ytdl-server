@@ -9,11 +9,12 @@ from constants import DOWNLOAD_PATH, get_download_file_list
 
 download_router = APIRouter()
 
-templates = Jinja2Templates(directory='templates')
+templates = Jinja2Templates(directory="templates")
+
 
 @download_router.get("/")
 async def main(request: Request):
-    return templates.TemplateResponse("main_page.html", {"request":request})
+    return templates.TemplateResponse("main_page.html", {"request": request})
 
 
 # @download_router.get("/playlist")
@@ -47,6 +48,7 @@ async def get_download_list():
 async def download_file(file_name: str):
     filepath = str(DOWNLOAD_PATH) + str(Path(f"/{file_name}"))
     return FileResponse(filepath, media_type="video/mp4")
+
 
 if __name__ == "__main__":
     pass

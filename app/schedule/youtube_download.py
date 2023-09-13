@@ -19,13 +19,17 @@ def download_playlist(playlist_id):
         },
         "flat-playlist": True,
     }
-    dl_opts = {"outtmpl": "/home/ii/PycharmProjects/ytdl-server/app/download/%(title)s.%(id)s.%(ext)s"}
+    dl_opts = {
+        "outtmpl": "/home/ii/PycharmProjects/ytdl-server/app/download/%(title)s.%(id)s.%(ext)s"
+    }
     process_opts = {
-        'format': 'mp3/bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-        }]
+        "format": "mp3/bestaudio/best",
+        "postprocessors": [
+            {
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+            }
+        ],
     }
     ydl_opts.update(dl_opts)
     ydl_opts.update(process_opts)
@@ -49,18 +53,24 @@ def download_playlist(playlist_id):
         return res
 
 
-def get_playlist_items(playlist_id = None):
+def get_playlist_items(playlist_id=None):
     if not playlist_id:
         raise ValueError
     api_key = os.getenv("YOUTUBE_API_KEY")
+    if not api_key:
+        raise ValueError
     next_page_token = True
     result = []
     while next_page_token:
-        request_url = "https://youtube.googleapis.com/youtube/v3/playlistItems?"\
-                      f"part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=50"
+        request_url = (
+            "https://youtube.googleapis.com/youtube/v3/playlistItems?"
+            f"part=snippet&playlistId={playlist_id}&key={api_key}&maxResults=50"
+        )
         if next_page_token is not True:
             request_url += f"&pageToken={next_page_token}"
         res = requests.get(request_url)
+        if res.status_code != 200:
+            raise ValueError
         res_json = res.json()
         res_items = res_json.get("items")
         if res_items:
@@ -76,13 +86,16 @@ def get_playlist_items(playlist_id = None):
     pprint.pprint(result)
     return result
 
+
 def get_downloaded_ids():
     path = get_download_file_list()
-    # path = "/home/ii/PycharmProjects/ytdl-server/app/download"
+    path = "/home/ii/PycharmProjects/ytdl-server/app/download"
     file_list = os.listdir(path)
     file_ids = [file_name.split(".")[-2] for file_name in file_list]
     print(file_list, file_ids)
     return file_ids
+
+
 #
 # if __name__ == "__main__":
 #     download_playlist()
