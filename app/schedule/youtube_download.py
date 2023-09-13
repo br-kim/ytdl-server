@@ -4,7 +4,7 @@ import pprint
 from yt_dlp import YoutubeDL
 import requests
 
-from constants import get_download_file_list
+from constants import get_download_file_list, DOWNLOAD_PATH
 from crud import create_video
 from dependencies import get_db
 
@@ -90,7 +90,7 @@ def get_playlist_items(playlist_id=None):
 
 
 def get_downloaded_ids():
-    path = get_download_file_list()
+    path = DOWNLOAD_PATH
     # path = "/home/ii/PycharmProjects/ytdl-server/app/download"
     file_list = os.listdir(path)
     file_ids = [file_name.split(".")[-2] for file_name in file_list]
