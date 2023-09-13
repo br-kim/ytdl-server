@@ -19,8 +19,10 @@ async def setting_scheduler():
     scheduler.add_job(
         download_playlist,
         "cron",
-        args=["PLX3CrwbL_r9bWZLNNSokkCyglMYs1uEzn"],
-        second=30,
+        args=[
+            ["PLX3CrwbL_r9ZM_O-vf1qZCu8_Hn3Bugrq", "PLX3CrwbL_r9andFCCGev0-R4ejxxWfQVH"]
+        ],
+        hour=3,
     )
     scheduler.print_jobs()
     scheduler.start()

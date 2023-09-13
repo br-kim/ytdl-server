@@ -9,7 +9,7 @@ from crud import create_video
 from dependencies import get_db
 
 
-def download_playlist(playlist_id):
+def download_playlist(playlist_id_list):
     ydl_opts = {
         "ignoreerrors": True,
         "extractor_args": {
@@ -37,9 +37,11 @@ def download_playlist(playlist_id):
     ydl_opts.update(process_opts)
     print(ydl_opts)
     with YoutubeDL(ydl_opts) as ydl:
-        playlist = get_playlist_items(playlist_id)
-        video_ids = [p["resource_id"] for p in playlist]
-        video_dict = {p["resource_id"]: p["title"] for p in playlist}
+        playlists = []
+        for playlist_id in playlist_id_list:
+            playlists.extend(get_playlist_items(playlist_id))
+        video_ids = [p["resource_id"] for p in playlists]
+        video_dict = {p["resource_id"]: p["title"] for p in playlists}
         already_downloaded_file_ids = get_downloaded_ids()
 
         download_video_list = list(set(video_ids) - set(already_downloaded_file_ids))
