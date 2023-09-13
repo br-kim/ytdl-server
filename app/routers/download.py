@@ -7,10 +7,9 @@ from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from yt_dlp import YoutubeDL
 
 import crud
-from constants import DOWNLOAD_PATH, get_download_file_list
+from constants import DOWNLOAD_PATH
 from dependencies import get_db
 
 download_router = APIRouter()

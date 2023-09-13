@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean
 
 from database import Base
 
+
 class Video(Base):
     __tablename__ = "video"
 
@@ -9,4 +10,3 @@ class Video(Base):
     resource_id = Column(String, unique=True)
     title = Column(String)
     is_downloaded = Column(Boolean, default=False)
-
