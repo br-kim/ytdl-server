@@ -1,11 +1,17 @@
+import os.path
 from pathlib import Path
+from typing import List
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
+from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 from yt_dlp import YoutubeDL
 
+import crud
 from constants import DOWNLOAD_PATH, get_download_file_list
+from dependencies import get_db
 
 download_router = APIRouter()
 
@@ -17,36 +23,24 @@ async def main(request: Request):
     return templates.TemplateResponse("main_page.html", {"request": request})
 
 
-# @download_router.get("/playlist")
-# async def get_playlist(request: Request):
-#     ydl_opts = {
-#         "ignoreerrors": True,
-#         "skip_download": True,
-#         "extractor_args": {"youtube": {"player_client": ["web"]}},
-#         "flat-playlist": True,
-#     }
-#     with YoutubeDL(ydl_opts) as ydl:
-#         res = ydl.extract_info(
-#             "https://www.youtube.com/playlist?list=PLX3CrwbL_r9andFCCGev0-R4ejxxWfQVH",
-#             download=False,
-#         )
-#         # for i in res["formats"]:
-#         #     if i["audio_ext"] != "none":
-#         #         if i["format_note"] == "medium":
-#         #             return HTMLResponse(f"""
-#         #             <html> <a href="{i['url']}">다운로드</a> </html>
-#         #             """)
-#         return res
+class Video(BaseModel):
+    title: str
+    is_downloaded: bool
+
+    class Config:
+        from_attributes = True
 
 
-@download_router.get("/download")
-async def get_download_list():
-    return get_download_file_list()
+@download_router.get("/download", response_model=List[Video])
+async def get_download_list(db=Depends(get_db)):
+    return [Video.model_validate(i) for i in crud.get_all_video(db)]
 
 
 @download_router.get("/download/{file_name}")
 async def download_file(file_name: str):
     filepath = str(DOWNLOAD_PATH) + str(Path(f"/{file_name}"))
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404)
     return FileResponse(filepath, media_type="video/mp4")
 
 

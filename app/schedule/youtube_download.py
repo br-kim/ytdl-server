@@ -5,6 +5,8 @@ from yt_dlp import YoutubeDL
 import requests
 
 from constants import get_download_file_list
+from crud import create_video
+from dependencies import get_db
 
 
 def download_playlist(playlist_id):
@@ -35,22 +37,22 @@ def download_playlist(playlist_id):
     ydl_opts.update(process_opts)
     print(ydl_opts)
     with YoutubeDL(ydl_opts) as ydl:
-        # res = ydl.extract_info(
-        #     "https://www.youtube.com/playlist?list=PLX3CrwbL_r9andFCCGev0-R4ejxxWfQVH",
-        #     download=False,
-        # )
-        # res = ydl.extract_info("PLX3CrwbL_r9b133VmN1YGLX7v7hhjSM0E", download=True)
         playlist = get_playlist_items(playlist_id)
         video_ids = [p["resource_id"] for p in playlist]
+        video_dict = {p["resource_id"]: p["title"] for p in playlist}
         already_downloaded_file_ids = get_downloaded_ids()
 
         download_video_list = list(set(video_ids) - set(already_downloaded_file_ids))
         print(download_video_list)
-        if not download_video_list:
+        if download_video_list:
+            ydl.download(download_video_list)
+            already_downloaded_file_ids = get_downloaded_ids()
+            for video_id in already_downloaded_file_ids:
+                video_title = video_dict[video_id]
+                create_video(db=next(get_db()), resource_id=video_id, title=video_title)
+            print("download completed")
+        else:
             print("새로운 동영상 없음")
-        res = ydl.download(download_video_list)
-        print("download completed")
-        return res
 
 
 def get_playlist_items(playlist_id=None):
