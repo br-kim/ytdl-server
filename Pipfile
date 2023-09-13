@@ -10,6 +10,7 @@ jinja2 = "*"
 uvicorn = "*"
 apscheduler = "*"
 requests = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 
