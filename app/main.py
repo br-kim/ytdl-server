@@ -4,6 +4,7 @@ import uvicorn
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 
+from database import engine, Base
 from routers import download
 from schedule.youtube_download import download_playlist
 
@@ -13,6 +14,7 @@ app.include_router(download.download_router)
 
 @app.on_event("startup")
 async def setting_scheduler():
+    Base.metadata.create_all(engine)
     scheduler = BackgroundScheduler()
     scheduler.add_job(
         download_playlist,
