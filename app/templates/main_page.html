@@ -19,7 +19,6 @@
         }
 
         async function loadFileList() {
-            console.log("test")
             file_list = await getFileList()
             for (element of file_list) {
                 div = await generateFileDiv(element)
@@ -41,19 +40,39 @@
             window.URL.revokeObjectURL(url);
         }
 
-        async function generateFileDiv(file_name) {
+        async function generateFileDiv(fileData) {
             container = document.createElement("div")
-            container.classList.add("d-flex")
-            element = document.createElement("div")
-            element.id = file_name
-            // element.src = `/download/${file_name}`;
-            element.innerText = file_name
+            container.classList.add("d-flex", "row")
+
+            downloadButtonContainer = document.createElement("div")
+            downloadButtonContainer.classList.add("col-2")
+
+            titleDiv = document.createElement("div")
+            titleDiv.classList.add("col-8")
+            titleDiv.id = fileData.title
+            titleDiv.innerText = fileData.title
+
             downloadButton = document.createElement("button");
             downloadButton.innerText = "다운로드";
             downloadButton.classList.add("btn", "btn-primary")
             downloadButton.addEventListener("click", async () => { await downloadFile(file_name) })
-            console.log(element);
-            container.append(element, downloadButton);
+            downloadButtonContainer.append(downloadButton)
+
+            checkDiv = document.createElement("div")
+            checkDiv.classList.add("form-check", "col")
+            checkInput = document.createElement("input")
+            checkInput.classList.add("form-check-input")
+            checkInput.type = "checkbox"
+            checkInput.value = ""
+            checkInput.id = "flexCheck"
+            checkInput.checked = fileData.is_downloaded
+            checkLabel = document.createElement("label")
+            checkLabel.classList.add("form-check-label")
+            checkLabel.for = checkInput.id
+            checkLabel.innerText="다운로드 여부"
+            checkDiv.append(checkInput, checkLabel)
+
+            container.append(titleDiv, downloadButtonContainer, checkDiv);
             return container
         }
 
