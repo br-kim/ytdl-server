@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List
 
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
+from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -26,6 +26,7 @@ async def main(request: Request):
 class Video(BaseModel):
     title: str
     is_downloaded: bool
+    resource_id: str
 
     class Config:
         from_attributes = True
@@ -42,6 +43,11 @@ async def download_file(file_name: str):
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404)
     return FileResponse(filepath, media_type="video/mp4")
+
+
+@download_router.patch("/video/{resource_id}")
+async def edit_video_status(resource_id: str, status: bool, db=Depends(get_db)):
+    crud.edit_video_downloaded_status(db=db, resource_id=resource_id, status=status)
 
 
 if __name__ == "__main__":

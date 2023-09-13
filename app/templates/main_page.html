@@ -60,22 +60,36 @@
 
             checkDiv = document.createElement("div")
             checkDiv.classList.add("form-check", "col")
+
             checkInput = document.createElement("input")
             checkInput.classList.add("form-check-input")
             checkInput.type = "checkbox"
             checkInput.value = ""
-            checkInput.id = "flexCheck"
+            checkInput.id = fileData.resource_id
             checkInput.checked = fileData.is_downloaded
+
+            checkInput.addEventListener("click", async ()=> {
+                await editDownloadStatus(fileData.resource_id)
+            })
+
             checkLabel = document.createElement("label")
             checkLabel.classList.add("form-check-label")
             checkLabel.for = checkInput.id
             checkLabel.innerText="다운로드 여부"
+
             checkDiv.append(checkInput, checkLabel)
 
             container.append(titleDiv, downloadButtonContainer, checkDiv);
             return container
         }
 
+        async function editDownloadStatus(resourceId){
+            let status = document.getElementById(resourceId).checked
+            res = await fetch(`/video/${resourceId}?status=${status}`,{
+                method: "PATCH"
+            })
+
+        }
         loadFileList().then()
         // getFileList().then(res => console.log(res))
     </script>
