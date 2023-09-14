@@ -4,12 +4,12 @@ import pprint
 from yt_dlp import YoutubeDL
 import requests
 
-from constants import get_download_file_list
+from constants import get_download_file_list, DOWNLOAD_PATH
 from crud import create_video
 from dependencies import get_db
 
 
-def download_playlist(playlist_id):
+def download_playlist(playlist_id_list):
     ydl_opts = {
         "ignoreerrors": True,
         "extractor_args": {
@@ -21,9 +21,9 @@ def download_playlist(playlist_id):
         },
         "flat-playlist": True,
     }
-    dl_opts = {
-        "outtmpl": "/home/ii/PycharmProjects/ytdl-server/app/download/%(title)s.%(id)s.%(ext)s"
-    }
+    # download_path = "/home/ii/PycharmProjects/ytdl-server/app/download"
+    download_path = DOWNLOAD_PATH
+    dl_opts = {"outtmpl": f"{download_path}/%(title)s.%(id)s.%(ext)s"}
     process_opts = {
         "format": "mp3/bestaudio/best",
         "postprocessors": [
@@ -37,9 +37,11 @@ def download_playlist(playlist_id):
     ydl_opts.update(process_opts)
     print(ydl_opts)
     with YoutubeDL(ydl_opts) as ydl:
-        playlist = get_playlist_items(playlist_id)
-        video_ids = [p["resource_id"] for p in playlist]
-        video_dict = {p["resource_id"]: p["title"] for p in playlist}
+        playlists = []
+        for playlist_id in playlist_id_list:
+            playlists.extend(get_playlist_items(playlist_id))
+        video_ids = [p["resource_id"] for p in playlists]
+        video_dict = {p["resource_id"]: p["title"] for p in playlists}
         already_downloaded_file_ids = get_downloaded_ids()
 
         download_video_list = list(set(video_ids) - set(already_downloaded_file_ids))
@@ -90,8 +92,8 @@ def get_playlist_items(playlist_id=None):
 
 
 def get_downloaded_ids():
-    path = get_download_file_list()
-    path = "/home/ii/PycharmProjects/ytdl-server/app/download"
+    path = DOWNLOAD_PATH
+    # path = "/home/ii/PycharmProjects/ytdl-server/app/download"
     file_list = os.listdir(path)
     file_ids = [file_name.split(".")[-2] for file_name in file_list]
     print(file_list, file_ids)

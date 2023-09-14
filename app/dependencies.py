@@ -4,6 +4,7 @@ from database import SessionLocal
 
 authorization = HTTPBearer()
 
+
 def get_db():
     db = SessionLocal()
     db.begin()

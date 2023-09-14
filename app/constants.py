@@ -4,6 +4,8 @@ from pathlib import Path
 BASE_PATH = os.path.abspath(os.path.curdir)
 DOWNLOAD_PATH = Path(BASE_PATH).joinpath(Path("download"))
 
+YTDL_SERVER_ENVIRON = os.getenv("YTDL_SERVER_ENVIRON", "local")
+
 # DOWNLOAD_FILE_LIST = os.listdir(DOWNLOAD_PATH)
 
 

@@ -4,12 +4,14 @@ import uvicorn
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 
+from config import get_settings
 from database import engine, Base
-from routers import download
+from routers import index, video
 from schedule.youtube_download import download_playlist
 
 app = FastAPI()
-app.include_router(download.download_router)
+app.include_router(index.index_router)
+app.include_router(video.video_router)
 
 
 @app.on_event("startup")
@@ -19,8 +21,8 @@ async def setting_scheduler():
     scheduler.add_job(
         download_playlist,
         "cron",
-        args=["PLX3CrwbL_r9bWZLNNSokkCyglMYs1uEzn"],
-        second=30,
+        args=[get_settings().JOB_PLAYLIST],
+        **get_settings().JOB_INTERVAL,
     )
     scheduler.print_jobs()
     scheduler.start()
