@@ -1,19 +1,19 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="d-flex flex-column">
-    <h1>다운로드 페이지</h1>
-    <div id="container">
-        <div id="file_list">
+    <div class="d-flex flex-column">
+        <h1>다운로드 페이지</h1>
+        <div id="container">
+            <div id="file_list">
+            </div>
         </div>
-    </div>
     </div>
 {% endblock %}
 {% block scripts %}
     {{ super() }}
-<script>
+    <script>
         async function getFileList() {
-            res = await fetch("/download")
+            res = await fetch("/video")
             res_json = await res.json()
             return res_json
         }
@@ -28,7 +28,7 @@
         }
 
         async function downloadFile(file_name) {
-            res = await fetch(`/download/${file_name}`)
+            res = await fetch(`/video/${file_name}`)
             console.log("clicked")
             blob = await res.blob()
             const url = window.URL.createObjectURL(blob)
@@ -55,7 +55,9 @@
             downloadButton = document.createElement("button");
             downloadButton.innerText = "다운로드";
             downloadButton.classList.add("btn", "btn-primary")
-            downloadButton.addEventListener("click", async () => { await downloadFile(file_name) })
+            downloadButton.addEventListener("click", async () => {
+                await downloadFile(file_name)
+            })
             downloadButtonContainer.append(downloadButton)
 
             checkDiv = document.createElement("div")
@@ -68,14 +70,14 @@
             checkInput.id = fileData.resource_id
             checkInput.checked = fileData.is_downloaded
 
-            checkInput.addEventListener("click", async ()=> {
+            checkInput.addEventListener("click", async () => {
                 await editDownloadStatus(fileData.resource_id)
             })
 
             checkLabel = document.createElement("label")
             checkLabel.classList.add("form-check-label")
             checkLabel.for = checkInput.id
-            checkLabel.innerText="다운로드 여부"
+            checkLabel.innerText = "다운로드 여부"
 
             checkDiv.append(checkInput, checkLabel)
 
@@ -83,15 +85,15 @@
             return container
         }
 
-        async function editDownloadStatus(resourceId){
+        async function editDownloadStatus(resourceId) {
             let status = document.getElementById(resourceId).checked
-            res = await fetch(`/video/${resourceId}?status=${status}`,{
+            res = await fetch(`/video/${resourceId}?status=${status}`, {
                 method: "PATCH"
             })
 
         }
+
         loadFileList().then()
-        // getFileList().then(res => console.log(res))
     </script>
 {% endblock %}
 
