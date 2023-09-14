@@ -9,12 +9,12 @@ from constants import YTDL_SERVER_ENVIRON
 
 class LocalSettings(BaseSettings):
     JOB_PLAYLIST: List[str] = os.getenv("YOUTUBE_PLAYLIST").split("|")
-    JOB_INTERVAL: Dict[str, str] = dict(second=30)
+    JOB_INTERVAL: Dict[str, int] = {"second": 30}
 
 
 class ProductionSettings(BaseSettings):
     JOB_PLAYLIST: List[str] = os.getenv("YOUTUBE_PLAYLIST").split("|")
-    JOB_INTERVAL: Dict[str, str] = dict(hour=4)
+    JOB_INTERVAL: Dict[str, int] = {"hour": 4}
 
 
 @lru_cache()
