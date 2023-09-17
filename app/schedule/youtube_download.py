@@ -51,7 +51,13 @@ def download_playlist(playlist_id_list):
             already_downloaded_file_ids = get_downloaded_ids()
             for video_id in already_downloaded_file_ids:
                 video_title = video_dict[video_id]
-                create_video(db=next(get_db()), resource_id=video_id, title=video_title)
+                file_path = f"{video_title}.{video_id}.mp3"
+                create_video(
+                    db=next(get_db()),
+                    resource_id=video_id,
+                    title=video_title,
+                    file_path=file_path,
+                )
             print("download completed")
         else:
             print("새로운 동영상 없음")
