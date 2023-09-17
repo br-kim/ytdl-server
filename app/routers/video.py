@@ -19,12 +19,14 @@ async def get_downloaded_video_list(db=Depends(get_db)):
     return [Video.model_validate(i) for i in crud.get_all_video(db)]
 
 
-@video_router.get("/video/{file_name}")
-async def download_video(file_name: str):
+@video_router.get("/video/{resource_id}")
+async def download_video(resource_id: str, db=Depends(get_db)):
+    video = crud.get_video_by_resource_id(db=db, resource_id=resource_id)
+    file_name = video.file_path
     filepath = str(DOWNLOAD_PATH) + str(Path(f"/{file_name}"))
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404)
-    return FileResponse(filepath, media_type="video/mp4")
+    return FileResponse(filepath, media_type="video/mp3")
 
 
 @video_router.patch("/video/{resource_id}")
