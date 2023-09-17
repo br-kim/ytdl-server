@@ -22,19 +22,21 @@
             file_list = await getFileList()
             for (element of file_list) {
                 div = await generateFileDiv(element)
-                console.log(div)
                 document.getElementById("file_list").appendChild(div)
             }
         }
 
-        async function downloadFile(file_name) {
-            res = await fetch(`/video/${file_name}`)
-            console.log("clicked")
+        async function downloadFile(file_name, resource_id) {
+            res = await fetch(encodeURI(`/video/${resource_id}`))
+            if (res.status === 404){
+                alert("존재하지 않는 파일입니다.")
+                return
+            }
             blob = await res.blob()
             const url = window.URL.createObjectURL(blob)
             const a = document.createElement("a")
             a.href = url
-            a.download = `${file_name}`
+            a.download = `${file_name}.mp3`
             a.click()
             a.remove()
             window.URL.revokeObjectURL(url);
@@ -56,7 +58,7 @@
             downloadButton.innerText = "다운로드";
             downloadButton.classList.add("btn", "btn-primary")
             downloadButton.addEventListener("click", async () => {
-                await downloadFile(file_name)
+                await downloadFile(fileData.title, fileData.resource_id)
             })
             downloadButtonContainer.append(downloadButton)
 
