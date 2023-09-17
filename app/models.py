@@ -10,3 +10,4 @@ class Video(Base):
     resource_id = Column(String, unique=True)
     title = Column(String)
     is_downloaded = Column(Boolean, default=False)
+    file_path = Column(String)
