@@ -1,0 +1,6 @@
+.gitignore
+.dockerignore
+docker-compose.yaml
+.env.dev
+app/download/
+app/user.db
