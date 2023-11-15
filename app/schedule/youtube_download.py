@@ -4,6 +4,7 @@ import pprint
 from yt_dlp import YoutubeDL
 import requests
 
+import crud
 from constants import get_download_file_list, DOWNLOAD_PATH
 from crud import create_video
 from dependencies import get_db
@@ -36,31 +37,34 @@ def download_playlist(playlist_id_list):
     ydl_opts.update(dl_opts)
     ydl_opts.update(process_opts)
     print(ydl_opts)
-    with YoutubeDL(ydl_opts) as ydl:
-        playlists = []
-        for playlist_id in playlist_id_list:
-            playlists.extend(get_playlist_items(playlist_id))
-        video_ids = [p["resource_id"] for p in playlists]
-        video_dict = {p["resource_id"]: p["title"] for p in playlists}
-        already_downloaded_file_ids = get_downloaded_ids()
-
-        download_video_list = list(set(video_ids) - set(already_downloaded_file_ids))
-        print(download_video_list)
-        if download_video_list:
-            ydl.download(download_video_list)
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            playlists = []
+            for playlist_id in playlist_id_list:
+                playlists.extend(get_playlist_items(playlist_id))
+            video_ids = [p["resource_id"] for p in playlists]
+            video_dict = {p["resource_id"]: p["title"] for p in playlists}
             already_downloaded_file_ids = get_downloaded_ids()
-            for video_id in already_downloaded_file_ids:
-                video_title = video_dict[video_id]
-                file_path = f"{video_title}.{video_id}.mp3"
-                create_video(
-                    db=next(get_db()),
-                    resource_id=video_id,
-                    title=video_title,
-                    file_path=file_path,
-                )
-            print("download completed")
-        else:
-            print("새로운 동영상 없음")
+            download_video_list = list(
+                set(video_ids) - set(already_downloaded_file_ids)
+            )
+            print("다운로드 대상", download_video_list)
+            if download_video_list:
+                ydl.download(download_video_list)
+                for video_id in download_video_list:
+                    video_title = video_dict[video_id]
+                    file_path = f"{video_title}.{video_id}.mp3"
+                    create_video(
+                        db=next(get_db()),
+                        resource_id=video_id,
+                        title=video_title,
+                        file_path=file_path,
+                    )
+                print("download completed")
+            else:
+                print("새로운 동영상 없음")
+    except Exception as e:
+        print("다운로드 작업 실패", e)
 
 
 def get_playlist_items(playlist_id=None):
