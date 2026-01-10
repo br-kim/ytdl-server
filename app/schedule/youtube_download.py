@@ -2,7 +2,7 @@ import os
 import pprint
 
 from yt_dlp import YoutubeDL
-from sqlite3 import IntegrityError
+from sqlalchemy.exc import IntegrityError
 import requests
 
 from constants import get_download_file_list, DOWNLOAD_PATH
