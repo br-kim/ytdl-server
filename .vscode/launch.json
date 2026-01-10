@@ -2,6 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Run main as module",
+            "type": "python",
+            "request": "launch",
+            "module": "app.main",
+            "cwd": "${workspaceFolder}/app",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "justMyCode": true
+        },
+
+        {
             "name": "Run youtube_download as module",
             "type": "python",
             "request": "launch",

@@ -62,6 +62,14 @@
             })
             downloadButtonContainer.append(downloadButton)
 
+            youtubeButton = document.createElement("button");
+            youtubeButton.innerText = "유튜브 바로가기";
+            youtubeButton.classList.add("btn", "btn-secondary")
+            youtubeButton.addEventListener("click", async () => {
+                await goToYoutube(fileData.resource_id)
+            })
+            downloadButtonContainer.append(youtubeButton)
+
             checkDiv = document.createElement("div")
             checkDiv.classList.add("form-check", "col")
 
@@ -93,6 +101,11 @@
                 method: "PATCH"
             })
 
+        }
+
+        async function goToYoutube(resourceId) {
+            // 유튜브 URL로 이동
+            window.open(`https://www.youtube.com/watch?v=${resourceId}`, '_blank');
         }
 
         loadFileList().then()

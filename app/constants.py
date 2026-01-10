@@ -13,4 +13,4 @@ def get_download_file_list():
     return os.listdir(DOWNLOAD_PATH)
 
 
-print(BASE_PATH, DOWNLOAD_PATH, get_download_file_list())
+# print(BASE_PATH, DOWNLOAD_PATH, get_download_file_list())

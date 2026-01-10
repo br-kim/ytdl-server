@@ -31,7 +31,7 @@ class YTDownloadResponse(BaseModel):
     message: Optional[str] = None
 
 class YTPlaylistResponse(BaseModel):
-    
+    pass
 
 # 간단한 헬스체크 엔드포인트
 @router.get("/health", status_code=status.HTTP_200_OK)
